@@ -15,7 +15,7 @@ var canJump = function(nums) {
 
     while (jump < indexArr.length && jump <= max_index) {
 
-        // 更新能走到的最大的位置，如果最大的位置都达不到终点，其余的点也到不l
+        // 更新能走到的最大的位置，如果最大的位置都达不到终点，其余的点也到不了
         if (max_index < indexArr[jump]) max_index = indexArr[jump]
 
         jump++
