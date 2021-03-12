@@ -7,7 +7,6 @@ var canJump = function(nums) {
     for (let i = 0; i < nums.length; i++) {
         indexArr.push(i + nums[i])
     }
-
     var jump = 0
     var max_index = indexArr[0]
     while (jump < indexArr.length && jump <= max_index) {
@@ -17,20 +16,14 @@ var canJump = function(nums) {
         jump++
     }
 
-
-
     if (jump == indexArr.length) return true
-
     return false
-
 };
-
 canJump([3, 2, 1, 0, 4])
-
-/**
- * @param {number[]} nums
- * @return {boolean}
- */
+    /**
+     * @param {number[]} nums
+     * @return {boolean}
+     */
 var canJump2 = function(nums) {
     //换一种思路，计算出该路线能到的最远距离，判断最远的距离是否超过了该路径或者刚好到达终点
     //每一次都计算当前位置以及以前能走到的最远距离（贪心）
