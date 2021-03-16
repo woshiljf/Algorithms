@@ -17,7 +17,7 @@ var getSmallestString = function(n, k) {
             }
         }
     }
-    return s
 
+    return s
 
 };

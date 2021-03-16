@@ -11,7 +11,7 @@ var makesquare = function(nums) {
     if (sum % 4) return false
     var target = sum / 4
     var backet = [0, 0, 0, 0]
-    nums.sort((a, b) => a - b)
+    nums.sort((a, b) => b - a)
 
     function dfs(i, nums, target, backet) {
 
@@ -19,7 +19,7 @@ var makesquare = function(nums) {
             return backet[0] == target && backet[1] == target && backet[2] == target && backet[3] == target
         }
         for (let j = 0; j < 4; j++) {
-
+            //  当前的火柴边放不下了，continue，应该继续放下一条边
             if (backet[j] + nums[i] > target) continue
 
             backet[j] += nums[i]

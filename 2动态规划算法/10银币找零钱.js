@@ -5,6 +5,7 @@
  */
 var coinChange = function(coins, amount) {
 
+    // dp[i] 表示
     let dp = new Array(amount + 1).fill(Infinity);
     dp[0] = 0;
 
