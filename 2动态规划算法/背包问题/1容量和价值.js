@@ -1,7 +1,7 @@
 /**
  *
  * 选择物品，物品有价值和大小，如何放进背包里面，使得背包拥有最大的价值
- *
+ *https://juejin.cn/post/6844903607855251463
  *
  */
 // 递归解决问题
@@ -10,30 +10,11 @@ var size = [4, 3, 1, 1]
 var bagCapacty = 4,
     n = 3
 
-function max(a, b) {
-    return a > b ? a : b
-}
 // console.log(dpnapasacdp(bagCapacty,size,value,n))
 console.log(ddpnapsacdp(bagCapacty, size, value, n))
-    // ddpnapsacdp(capacty,size,value,n)
-
-// function dpnapasacdp(capacty, size, value, n) {
-//     if (n == 0 || capacty == 0) {
-//         return 0
-//     }
-//     if (size[n - 1] > capacty) {
-//         return dpnapasacdp(capacty, size, value, n - 1)
-//     } else {
-//         return max(
-//             value[n - 1] + dpnapasacdp(capacty - size[n - 1], size, value, n - 1),
-//             dpnapasacdp(capacty, size, value, n - 1)
-//         )
-//     }
-// }
-
-// 动态规划解决问题
 
 function ddpnapsacdp(capacty, size, value, n) {
+
     var dp = []
     for (var i = 0; i <= capacty + 1; i++) {
         dp[i] = []
@@ -50,9 +31,9 @@ function ddpnapsacdp(capacty, size, value, n) {
                 // 如果当前物品的大小大于背包,把上一级的商品的最大值给就好了
                 dp[i][w] = dp[i - 1][w]
             }
-            console.log(dp[i][w] + ' ')
+            // console.log(dp[i][w] + ' ')
         }
     }
-    console.log(dp)
+
     return dp[n][capacty]
 }

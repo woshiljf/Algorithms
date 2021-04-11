@@ -36,3 +36,11 @@ var maxAreaOfIsland = function(grid) {
     return result
 
 };
+var arr = [
+    [1, 1, 1, 0, 1, 1],
+    [0, 1, 0, 0, 0, 1],
+    [1, 1, 0, 1, 0, 1],
+    [0, 1, 0, 0, 0, 1],
+]
+var res = maxAreaOfIsland(arr)
+console.log(res);
