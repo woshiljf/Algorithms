@@ -7,32 +7,32 @@
  *
  */
 var candidates = [10, 1, 2, 7, 6, 1, 5],
-    target = 8
-var combinationSum2 = function(candidates, target) {
-    let n = candidates.length
-    let res = []
-    let tmpPath = []
-    candidates = candidates.sort((a, b) => {
-        return a - b
-    })
+  target = 8
+var combinationSum2 = function (candidates, target) {
+  let n = candidates.length
+  let res = []
+  let tmpPath = []
+  candidates = candidates.sort((a, b) => {
+    return a - b
+  })
 
-    let backtrack = function(tempPath, target, start) {
-        if (target == 0) {
-            res.push(tempPath)
-            return
-        }
-
-        for (let i = start; i < candidates.length; i++) {
-            if (candidates[i] > target) break //不加也可以，加了可以减少一次循环
-                // 这一句很重要，因为数组中有重复的数组，数组排过序的，当前元素于上一个元素相同，进入下个循环就好，
-            tempPath.push(candidates[i])
-            backtrack(tempPath.slice(), target - candidates[i], i)
-            tempPath.pop()
-        }
+  let backtrack = function (tempPath, target, start) {
+    if (target == 0) {
+      res.push(tempPath)
+      return
     }
 
-    backtrack(tmpPath, target, 0)
-    return res
+    for (let i = start; i < candidates.length; i++) {
+      if (candidates[i] > target) break //不加也可以，加了可以减少一次循环
+      // 这一句很重要，因为数组中有重复的数组，数组排过序的，当前元素于上一个元素相同，进入下个循环就好，
+      tempPath.push(candidates[i])
+      backtrack(tempPath.slice(), target - candidates[i], i + 1)
+      tempPath.pop()
+    }
+  }
+
+  backtrack(tmpPath, target, 0)
+  return res
 }
 var res = combinationSum2(candidates, target)
 console.log(res)

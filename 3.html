@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>模板生成器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/vue/2.5.22/vue.min.js"></script>
+
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      function combineTemplateAndInput(template, input) {
+        if (!template || !input) {
+          return "";
+        }
+        var inputLines = input.split('\n');
+        var inputCount = 0;
+
+        // 统计数据的数量个数
+        for (var i = 0; i < inputLines.length; i++) {
+          var line = inputLines[i];
+          if (line) {
+            inputCount++;
+          }
+
+        }
+
+        // 替换数据
+        var resLines = [];
+        var inputIndex = 1;
+        for (var i = 0; i < inputLines.length; i++) {
+          var line = inputLines[i];
+          // 忽略了空行
+          if (!line) {
+            resLines.push("");
+            continue;
+          }
+
+          // 将数据按\t分隔生成$1=xx,$2=xx,$3=xx
+          var dColumns = line.split('\t');
+          var mColumnData = {};
+          for (var j = 0; j < dColumns.length; j++) {
+            mColumnData['$' + (1 + j)] = dColumns[j];
+          }
+
+
+          var resLine = template;
+          // 先进行$?,$#这些替换，避免数据中的相同格式干扰
+          // 替换$?，下标
+          resLine = resLine.replace(/(\$\?)/g, inputIndex);
+
+          // 替换$#，数据数量
+          resLine = resLine.replace(/(\$#)/g, inputCount);
+
+          // 替换$0，整行数据
+          resLine = resLine.replace(/(\$0)/g, line);
+
+          // 找出模板中的`$数字`格式的内容，并进行替换
+          resLine = resLine.replace(/(\$\d+)/g, function (match, p1) {
+            if (mColumnData[p1]) {
+              return mColumnData[p1];
+            }
+            return "";
+          });
+
+          // 找出模板中`${数字}`格式的内容，进行替换
+          resLine = resLine.replace(/(\$\{\d+\})/g, function (match, p1) {
+            if (mColumnData[p1]) {
+              return mColumnData[p1];
+            }
+            return "";
+          });
+
+          inputIndex++;
+
+
+          resLines.push(resLine);
+
+        }
+        return resLines.join("");
+      }
+
+
+      var vm = new Vue({
+        el: "#container",
+        data: {
+          inputTemplate: [
+            "mkdir -p $4",
+            "touch $4$2.proto",
+            "\n"
+          ].join("\n"),
+          inputContent: [
+            "/abc/getNearbyOrgs/1.0    GetNearbyOrgs    GetNearbyOrgs.proto    abc/    getNearbyOrgs    /abc/getNearbyOrgs/1.0",
+            "/abc/getOrgByArea/1.0    GetOrgByArea    GetOrgByArea.proto    abc/    getOrgByArea    /abc/getOrgByArea/1.0",
+            "/abc/addFeedback/1.0    AddFeedback    AddFeedback.proto    abc/    addFeedback    /abc/addFeedback/1.0",
+            "/abc/getOrgCities/1.0    GetOrgCities    GetOrgCities.proto    abc/    getOrgCities    /abc/getOrgCities/1.0",
+            "/abc/getServiceInfo/1.0    GetServiceInfo    GetServiceInfo.proto    abc/    getServiceInfo    /abc/getServiceInfo/1.0",
+            "/hello/sayNearbyOrgs/1.0    sayNearbyOrgs    sayNearbyOrgs.proto    hello/    sayNearbyOrgs    /hello/sayNearbyOrgs/1.0",
+            "/hello/sayOrgByArea/1.0    sayOrgByArea    sayOrgByArea.proto    hello/    sayOrgByArea    /hello/sayOrgByArea/1.0",
+            "/hello/sayOrgCities/1.0    sayOrgCities    sayOrgCities.proto    hello/    sayOrgCities    /hello/sayOrgCities/1.0",
+            "/hello/sayServiceInfo/1.0    sayServiceInfo    sayServiceInfo.proto    hello/    sayServiceInfo    /hello/sayServiceInfo/1.0"
+          ].join("\n"),
+          outputContent: "",
+          msg: {
+            title: "帮助",
+            content: [
+              "$?: 数据的顺序，从1开始，不含空行",
+              "$#: 数据的数量，不含空行",
+              "$0: 原始数据，整行数据",
+              "$数字: $1,$2,...，表示第1,2,...列数据",
+              "${数字}: ${11},${12},...，表示第11,12,...列数据，用于去除$11与$1的混淆(暂未实现)"
+            ].join("<br/>")
+          }
+        },
+        methods: {
+          aiGen: function () {
+            var self = this;
+            self.outputContent = combineTemplateAndInput(self.inputTemplate, self.inputContent);
+          },
+          clearInputContent: function () {
+            var self = this;
+            self.inputContent = "";
+          },
+          clearInputTemplate: function () {
+            var self = this;
+            self.inputTemplate = "";
+          },
+          clearOutputContent: function () {
+            var self = this;
+            self.outputContent = "";
+          }
+        }
+      });
+
+
+    });
+  </script>
+</head>
+
+<body>
+
+
+  <div id="container" class="container ">
+
+    <div class="row">
+
+      <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+        <h3 class="text-center">模板生成器</h3>
+      </div>
+
+      <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 bs-callout bs-callout-warning">
+        <div class="alert alert-warning" v-html="msg.content"></div>
+      </div>
+      <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="inputTemplate">
+            <div class="row">
+              <label class="col-sm-4 col-xs-4">模板</label>
+            </div>
+            <div class="row">
+              <textarea type="text" rows="10" name="inputTemplate" id="inputTemplateText" v-model="inputTemplate"
+                placeholder="请输入模板" class="form-control"></textarea>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="inputContent">
+            <div class="row">
+              <label class="col-sm-4 col-xs-4">输入</label>
+            </div>
+
+            <div class="row">
+              <textarea type="text" rows="10" name="inputTemplate" v-model="inputContent" placeholder="请输入数据"
+                id="inputContentText" class="form-control col-md-12 text-to-copy-1"></textarea>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-right" id="opButtons">
+        <button class="btn btn-primary" @click="clearInputTemplate()">清空模板</button>
+        <button class="btn btn-primary" @click="clearInputContent()">清空输入</button>
+        <button class="btn btn-primary" @click="clearOutputContent()">清空输出</button>
+        <button class="btn btn-success" @click="aiGen()">生成</button>
+      </div>
+
+
+      <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12" id="outputContent">
+
+        <div class="row">
+          <label class="col-sm-2 col-xs-2">输出</label>
+        </div>
+        <div class="row">
+          <textarea type="text" rows="20" name="outputContent" id="outputTextContent" v-model="outputContent"
+            placeholder="" class="form-control" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+</body>
+
+</html>
